@@ -8,7 +8,7 @@ const apiRoot = 'https://tck-wedding-b97c8.web.app/api';
 interface RouteDefinition {
   method: 'GET' | 'POST';
   command: string;
-  editPath?: boolean;
+  pathExample?: string;
   bodyExample?: Object;
 }
 
@@ -16,11 +16,20 @@ interface DebugItemProps {
   routeDefinition: RouteDefinition;
 }
 
+function tryPrettifyJSON(text: string): string {
+  try {
+    return JSON.stringify(JSON.parse(text), null, 2);
+  } catch (err) {
+    return text;
+  }
+}
+
 function DebugItem({ routeDefinition }: DebugItemProps) {
-  const { method, command, editPath, bodyExample } = routeDefinition;
+  const { method, command, pathExample, bodyExample } = routeDefinition;
+  const editPath = !!pathExample;
   const editBody = method === 'POST';
-  const [path, setPath] = useState(`/${command}`);
-  const [pathInput, setPathInput] = useState('');
+  const [path, setPath] = useState(pathExample ? `/${command}/${pathExample}` : `/${command}`);
+  const [pathInput, setPathInput] = useState(pathExample || '');
   const [bodyInput, setBodyInput] = useState(bodyExample ? JSON.stringify(bodyExample, null, 2) : '');
   const [res, setRes] = useState('');
 
@@ -80,13 +89,17 @@ function DebugItem({ routeDefinition }: DebugItemProps) {
         />
       )}
       <div>Response:</div>
-      <div>{res}</div>
+      <div
+        title={tryPrettifyJSON(res)}
+        style={{ wordBreak: 'break-all', maxHeight: '80px', overflowX: 'auto' }}>{res}</div>
     </div>
   );
 }
 
 const api: RouteDefinition[] = [
-  { method: 'GET', command: 'user', editPath: true },
+  { method: 'GET', command: 'user', pathExample: '123' },
+  { method: 'GET', command: 'userTopScores', pathExample: '123/BOB' },
+  { method: 'GET', command: 'topScores', pathExample: '0' },
   { method: 'POST', command: 'unlockStage', bodyExample: { userId: '123', stageId: '0' } },
   {
     method: 'POST',
@@ -111,20 +124,22 @@ export function DebugPanel() {
     initRandomSampleData(20).catch(console.error);
   };
 
-  return (<div style={{ width: '300px', backgroundColor: 'rgb(199,204,215)' }}>
-    <div style={{ padding: '16px' }}>
-      <Typography variant={'h4'}>Debug Tools</Typography>
+  return (
+    <div style={{ width: '300px', backgroundColor: 'rgb(199,204,215)', overflowX: 'auto' }}>
+      <div style={{ padding: '16px' }}>
+        <Typography variant={'h4'}>Debug Tools</Typography>
+      </div>
+      {api.map((routeDefinition) => {
+        return (
+          <DebugItem
+            key={`${routeDefinition.method}-${routeDefinition.command}`}
+            routeDefinition={routeDefinition}
+          />
+        );
+      })}
+      <div style={{ padding: '16px' }}>
+        <button value="Send" onClick={onButtonClick}>Send Random Scores</button>
+      </div>
     </div>
-    {api.map((routeDefinition) => {
-      return (
-        <DebugItem
-          key={`${routeDefinition.method}-${routeDefinition.command}`}
-          routeDefinition={routeDefinition}
-        />
-      );
-    })}
-    <div style={{ padding: '16px' }}>
-      <button value="Send" onClick={onButtonClick}>Send Random Scores</button>
-    </div>
-  </div>);
+  );
 }
