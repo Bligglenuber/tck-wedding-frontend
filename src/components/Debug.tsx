@@ -129,6 +129,7 @@ export function DebugPanel() {
       <div style={{ padding: '16px' }}>
         <Typography variant={'h4'}>Debug Tools</Typography>
       </div>
+      <div style={{ padding: '16px' }}>API root: {apiRoot}</div>
       {api.map((routeDefinition) => {
         return (
           <DebugItem
