@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from 'react';
 import { randScoreData } from '../utils/rand';
 
 // const apiRoot = 'http://127.0.0.1:5000/api';
-const apiRoot = 'https://api.leeshandtump.dance/api';
+const apiRoot = 'https://api.leeshandtump.dance';
 
 interface RouteDefinition {
   method: 'GET' | 'POST';
