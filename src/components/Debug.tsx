@@ -6,7 +6,7 @@ import { randScoreData } from '../utils/rand';
 const apiRoot = 'https://api.leeshandtump.dance';
 
 interface RouteDefinition {
-  method: 'GET' | 'POST';
+  method: 'GET' | 'POST' | 'PUT';
   command: string;
   pathExample?: string;
   bodyExample?: Object;
@@ -27,7 +27,7 @@ function tryPrettifyJSON(text: string): string {
 function DebugItem({ routeDefinition }: DebugItemProps) {
   const { method, command, pathExample, bodyExample } = routeDefinition;
   const editPath = !!pathExample;
-  const editBody = method === 'POST';
+  const editBody = method === 'PUT';
   const [path, setPath] = useState(pathExample ? `/${command}/${pathExample}` : `/${command}`);
   const [pathInput, setPathInput] = useState(pathExample || '');
   const [bodyInput, setBodyInput] = useState(bodyExample ? JSON.stringify(bodyExample, null, 2) : '');
@@ -100,9 +100,9 @@ const api: RouteDefinition[] = [
   { method: 'GET', command: 'user', pathExample: '123' },
   { method: 'GET', command: 'userTopScores', pathExample: '123/BOB' },
   { method: 'GET', command: 'topScores', pathExample: '0' },
-  { method: 'POST', command: 'unlockStage', bodyExample: { userId: '123', stageId: '0' } },
+  { method: 'PUT', command: 'unlockStage', bodyExample: { userId: '123', stageId: '0' } },
   {
-    method: 'POST',
+    method: 'PUT',
     command: 'submitScore',
     bodyExample: { userId: '123', name: 'BOB', stageId: '0', score: 99, data: '' }
   },
@@ -112,7 +112,7 @@ function initRandomSampleData(count: number) {
   const scoreData = randScoreData(count);
   return Promise.all(scoreData.map((score) => {
     return fetch(`${apiRoot}/submitScore`, {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(score)
     })
       .catch(console.error);
