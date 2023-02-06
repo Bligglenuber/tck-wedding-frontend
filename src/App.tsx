@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import { DebugPanel } from './components/Debug';
+// import { DebugPanel } from './components/Debug';
 import { Scoreboard } from './components/Scoreboard';
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
       <Box flexGrow={2} display={'flex'}>
         <Scoreboard/>
       </Box>
-      <DebugPanel/>
+      {/*<DebugPanel/>*/}
     </Box>
   );
 }
